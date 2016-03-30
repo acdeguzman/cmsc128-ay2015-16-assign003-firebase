@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <script src='https://cdn.firebase.com/js/client/2.2.1/firebase.js'></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  </head>
+  <body>
+    <div id="tableDiv">
+      <table class="centered striped light-green accent-1 z-depth-1">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Organization</th>
+            <th>Contact number</th>
+          </tr>
+        </thead>
+        <tbody id="tableContent"></tbody>
+      </table>
+    </div>
+
+    <div class="row">
+    <form class="col s12">
+      <div class="row">
+        <div class="input-field col s4">
+          <i class="material-icons prefix">perm_identity</i>
+          <input id="name" type="text" class="validate" required="" placeholder="Name">
+        </div>
+        <div class="input-field col s4">
+          <i class="material-icons prefix">language</i>
+          <input id="org" type="text" class="validate" required="" placeholder="Organization">
+        </div>
+        <div class="input-field col s4">
+          <i class="material-icons prefix">phone</i>
+          <input id="contact" type="text" class="validate" required="" placeholder="Contact Number">
+        </div>
+      </div>
+      <div>
+        <button id="submit" class="btn waves-effect waves-light light-green accent-4 z-depth-4" type="submit" name="action">Submit
+          <i class="material-icons right">send</i>
+         </button>
+      </div>
+    </form>
+  </div>
+
+    <script>
+      var db = new Firebase('https://luminous-inferno-2793.firebaseio.com/');
+      $('#submit').click(function () {
+          var name = $('#name').val();
+          var org = $('#org').val();
+          var contact = $('#contact').val();
+
+          if(name != '' && org !='' && contact !='') {
+            db.push({name: name, org: org, contact: contact});
+            $('#name').val('');
+            $('#org').val('');
+            $('#contact').val('');
+          }
+      });
+      
+      db.on('child_added', function(snapshot) {
+        var message = snapshot.val();
+		    display(message.name, message.org, message.contact);
+      });
+
+      function display(name, org, contact) {
+        $('<tr/>').prepend($('<td/>').text(contact)).prepend($('<td/>').text(org)).prepend($('<td/>').text(name)).appendTo($('#tableContent'));
+        $('#tableContent')[0].scrollTop = $('#tableContent')[0].scrollHeight;
+      };
+    </script>
+  </body>
+</html>
